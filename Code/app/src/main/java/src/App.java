@@ -3,6 +3,12 @@
  */
 package src;
 
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+
+import src.utils.Constants;
+
 public class App {
     public String getGreeting() {
         return "Hello World!";
@@ -10,5 +16,46 @@ public class App {
 
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
+        App app = new App();
+
+        Scanner scanner = new Scanner(System.in);
+        try {
+            app.ClearScreen();
+
+            while (true) {
+                // Request a command.
+                System.out.println("Please input a command to be echoed: ");
+                String input = scanner.nextLine();
+                app.ClearScreen();
+                app.ParseInput(input);
+                app.PrintBreak();
+            }
+        } catch (IllegalStateException | NoSuchElementException | InterruptedException | IOException e) {
+            System.out.println("Input failure. Exiting application. Message: " + e.getMessage());
+        }
+    }
+
+    // Clears the console when called.
+    private void ClearScreen() throws InterruptedException, IOException {
+        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+    }
+    
+    // Parses user input and directs the command appropriately.
+    private void ParseInput(String input) {
+        switch (input.toLowerCase()) {
+            case Constants.testValue:
+                System.out.println("Test command receieved.");
+                break;
+            case Constants.commandQuit:
+                System.exit(0);
+            default:
+                System.out.printf("Input was: \"%s\".\n", input);
+                break;
+        }
+    }
+
+    // Adds a line break for easier visual parsing.
+    private void PrintBreak() {
+        System.out.println("\n");
     }
 }
