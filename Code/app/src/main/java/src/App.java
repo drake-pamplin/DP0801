@@ -7,9 +7,14 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import src.repository.ToolRepository;
 import src.utils.Constants;
 
 public class App {
+    ToolRepository toolRepository = ToolRepository.GetInstance();
+    
+    String outputString = "";
+    
     public String getGreeting() {
         return "Hello World!";
     }
@@ -28,6 +33,12 @@ public class App {
                 String input = scanner.nextLine();
                 app.ClearScreen();
                 app.ParseInput(input);
+
+                if (app.outputString != null && !app.outputString.isEmpty()) {
+                    System.out.println(app.outputString);
+                    app.outputString = "";
+                }
+
                 app.PrintBreak();
             }
         } catch (IllegalStateException | NoSuchElementException | InterruptedException | IOException e) {
@@ -46,8 +57,12 @@ public class App {
             case Constants.testValue:
                 System.out.println("Test command receieved.");
                 break;
-            case Constants.commandQuit:
+            case Constants.commandQuit:  
                 System.exit(0);
+                break;
+            case Constants.commandTools:
+                ProcessToolsList();
+                break;
             default:
                 System.out.printf("Input was: \"%s\".\n", input);
                 break;
@@ -57,5 +72,10 @@ public class App {
     // Adds a line break for easier visual parsing.
     private void PrintBreak() {
         System.out.println("\n");
+    }
+
+    // Process the list tools command.
+    private void ProcessToolsList() {
+        outputString += String.format("There are %s tools.", toolRepository.GetNumberOfTools());
     }
 }
