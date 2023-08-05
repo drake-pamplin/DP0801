@@ -8,7 +8,19 @@ import lombok.Setter;
 public class Tool {
     @Getter
     @Setter
+    private Boolean toolChargeHoliday;
+    
+    @Getter
+    @Setter
+    private Boolean toolChargeWeekend;
+    
+    @Getter
+    @Setter
     private String toolCode;
+
+    @Getter
+    @Setter
+    private Float toolDailyCharge;
 
     @Getter
     @Setter

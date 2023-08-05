@@ -19,11 +19,14 @@ public class ToolRepository {
         return instance;
     }
     
-    public ToolRepository() {
+    private ToolRepository() {
         toolLibrary = new HashMap<>();
         for (int toolIndex = 0; toolIndex < Constants.toolBrands.size(); toolIndex++) {
             Tool newTool = new Tool(
+                Constants.toolChargeHoliday.get(toolIndex),
+                Constants.toolChargeWeekend.get(toolIndex),
                 Constants.toolCodes.get(toolIndex),
+                Constants.toolDailyCharges.get(toolIndex),
                 Constants.toolTypes.get(toolIndex),
                 Constants.toolBrands.get(toolIndex)
             );
@@ -42,7 +45,7 @@ public class ToolRepository {
 
         try {
             tool = toolLibrary.get(toolCode);
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             String errorMessage = String.format(Constants.exceptionMessageInvalidArg, Constants.fieldToolCode, toolCode);
             throw new InvalidArgException(e.getMessage(), Constants.fieldToolCode, errorMessage);
         }
