@@ -7,3 +7,5 @@ v0.3.0-tool-repository =========================================================
 - Added ToolRepository.java class.
 - Added tool repository fields and logic to repo class.
 - Hooked up test command in controller class.
+
+v0.4.0-rental-repository ==========================================================================
