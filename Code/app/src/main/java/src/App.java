@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import src.VO.Tool;
 import src.repository.ToolRepository;
 import src.utils.Constants;
 
@@ -55,7 +56,7 @@ public class App {
     private void ParseInput(String input) {
         switch (input.toLowerCase()) {
             case Constants.testValue:
-                System.out.println("Test command receieved.");
+                outputString += "Test output received.";
                 break;
             case Constants.commandQuit:  
                 System.exit(0);
@@ -64,7 +65,7 @@ public class App {
                 ProcessToolsList();
                 break;
             default:
-                System.out.printf("Input was: \"%s\".\n", input);
+                outputString += String.format("Input was: \"%s\".\n", input);
                 break;
         }
     }
@@ -76,6 +77,11 @@ public class App {
 
     // Process the list tools command.
     private void ProcessToolsList() {
-        outputString += String.format("There are %s tools.", toolRepository.GetNumberOfTools());
+        String output = "Tool Code | Tool Type | Tool Brand";
+        for (Tool tool : toolRepository.GetTools()) {
+            output += String.format("\n%s | %s | %s", tool.getToolCode(), tool.getToolType(), tool.getToolBrand());
+        }
+        
+        outputString += output;
     }
 }
