@@ -91,7 +91,7 @@ public class RentalRepository {
     }
 
     // Get list of all rental agreement serial numbers.
-    public List<String> GetRentalAgreements() {
+    public List<String> GetRentalAgreementSerialNumbers() {
         List<String> serialNumbers = new ArrayList<>();
         
         rentalAgreementLibrary.forEach((key, value) -> {
