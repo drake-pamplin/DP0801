@@ -9,3 +9,5 @@ v0.3.0-tool-repository =========================================================
 - Hooked up test command in controller class.
 
 v0.4.0-rental-repository ==========================================================================
+- Added RentalRepository.java class.
+- Added RentalAgreement.java class.
