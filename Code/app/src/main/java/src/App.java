@@ -9,10 +9,13 @@ import java.util.Scanner;
 
 import src.VO.Tool;
 import src.repository.ToolRepository;
+import src.service.HelpService;
 import src.utils.Constants;
 
 public class App {
     ToolRepository toolRepository = ToolRepository.GetInstance();
+
+    HelpService helpService = HelpService.GetInstance();
     
     String outputString = "";
     
@@ -30,7 +33,7 @@ public class App {
 
             while (true) {
                 // Request a command.
-                System.out.println("Please input a command to be echoed: ");
+                System.out.println(String.format(Constants.fieldHelpHint, Constants.commandHelp) + "\nPlease input a command to be echoed: ");
                 String input = scanner.nextLine();
                 app.ClearScreen();
                 app.ParseInput(input);
@@ -58,6 +61,9 @@ public class App {
             case Constants.testValue:
                 outputString += "Test output received.";
                 break;
+            case Constants.commandHelp:
+                ProcessHelpCommand();    
+            break;
             case Constants.commandQuit:  
                 System.exit(0);
                 break;
@@ -75,6 +81,11 @@ public class App {
         System.out.println("\n");
     }
 
+    // Process the help command.
+    private void ProcessHelpCommand() {
+        outputString += helpService.getCommandList();
+    }
+    
     // Process the list tools command.
     private void ProcessToolsList() {
         String output = "Tool Code | Tool Type | Tool Brand";
