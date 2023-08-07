@@ -15,3 +15,5 @@ v0.4.0-rental-repository =======================================================
 v0.5.0-help-service ===============================================================================
 - Added HelpService.java class.
 - Reformatted input loop to relect new help command to give the user a reference point.
+
+v0.6.0-rental-service =============================================================================
