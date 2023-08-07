@@ -10,12 +10,14 @@ import java.util.Scanner;
 import src.VO.Tool;
 import src.repository.ToolRepository;
 import src.service.HelpService;
+import src.service.RentalService;
 import src.utils.Constants;
 
 public class App {
     ToolRepository toolRepository = ToolRepository.GetInstance();
 
     HelpService helpService = HelpService.GetInstance();
+    RentalService rentalService = RentalService.GetInstance();
     
     String outputString = "";
     
