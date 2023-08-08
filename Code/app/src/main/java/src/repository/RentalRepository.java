@@ -1,8 +1,6 @@
 package src.repository;
 
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +25,11 @@ public class RentalRepository {
 
     private Map<String, RentalAgreement> rentalAgreementLibrary;
 
+    // Add a new rental agreement to the database.
+    public void AddRentalAgreement(RentalAgreement rentalAgreement) {
+        rentalAgreementLibrary.put(rentalAgreement.getRentalAgreementSerialNumber(), rentalAgreement);
+    }
+    
     // Get a rental agreement by serial number.
     public RentalAgreement GetRentalAgreementBySerialNumber(String serialNumber) throws InvalidArgException {
         RentalAgreement rentalAgreement = null;
