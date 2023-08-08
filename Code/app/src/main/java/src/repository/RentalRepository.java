@@ -27,55 +27,6 @@ public class RentalRepository {
 
     private Map<String, RentalAgreement> rentalAgreementLibrary;
 
-    // Generates new rental agreement and returns the serial number.
-    public String CreateNewRentalAgreement(
-        int rentalAgreementChargeDays,
-        Date rentalAgreementCheckoutDate,
-        float rentalAgreementDailyRentalCharge,
-        float rentalAgreementDiscountAmount,
-        int rentalAgreementDiscountPercent,
-        Date rentalAgreementDueDate,
-        float rentalAgreementFinalCharge,
-        float rentalAgreementPreDiscountCharge,
-        int rentalAgreementRentalDays,
-        String rentalAgreementToolBrand,
-        String rentalAgreementToolCode,
-        String rentalAgreementToolType
-    ) {
-        // Generate unique serial number based on time.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(rentalAgreementCheckoutDate);
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        int second = calendar.get(Calendar.SECOND);
-        String rentalAgreementSerialNumber = String.format("%s%s%s%s%s%s",
-            year, month, day, hour, minute, second
-        );
-        
-        RentalAgreement rentalAgreement = new RentalAgreement(
-            rentalAgreementChargeDays,
-            rentalAgreementCheckoutDate,
-            rentalAgreementDailyRentalCharge,
-            rentalAgreementDiscountAmount,
-            rentalAgreementDiscountPercent,
-            rentalAgreementDueDate,
-            rentalAgreementFinalCharge,
-            rentalAgreementPreDiscountCharge,
-            rentalAgreementRentalDays,
-            rentalAgreementSerialNumber,
-            rentalAgreementToolBrand,
-            rentalAgreementToolCode,
-            rentalAgreementToolType
-        );
-
-        rentalAgreementLibrary.put(rentalAgreementSerialNumber, rentalAgreement);
-        
-        return rentalAgreementSerialNumber;
-    }
-
     // Get a rental agreement by serial number.
     public RentalAgreement GetRentalAgreementBySerialNumber(String serialNumber) throws InvalidArgException {
         RentalAgreement rentalAgreement = null;
