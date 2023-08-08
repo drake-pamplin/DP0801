@@ -82,6 +82,7 @@ public class RentalService {
         float rentalAgreementDailyRentalCharge = tool.getToolDailyCharge();
         
         // Subtract non-chargeable days from total day count.
+        // Determine number of chargeable days in the rental duration.
         int rentalAgreementChargeDays;
 
         // Calucated from pre-discount charge * discount percent.
