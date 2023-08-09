@@ -1,5 +1,7 @@
 package src.service;
 
+import java.util.List;
+
 import src.VO.Tool;
 import src.exception.InvalidArgException;
 import src.repository.ToolRepository;
@@ -31,5 +33,9 @@ public class ToolService {
         }
         
         return tool;
+    }
+
+    public List<Tool> GetTools() {
+        return toolRepository.GetTools();
     }
 }
