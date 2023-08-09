@@ -39,7 +39,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass.set("src.PointOfSaleController")
+    mainClass.set("src.controller.PointOfSaleController")
 }
 
 tasks.named<JavaExec>("run") {

@@ -4,6 +4,9 @@
 package src;
 
 import org.junit.Test;
+
+import src.controller.PointOfSaleController;
+
 import static org.junit.Assert.*;
 
 public class PointOfSaleControllerTest {
