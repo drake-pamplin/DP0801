@@ -1,11 +1,15 @@
 package src.service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import src.VO.RentalAgreement;
 import src.VO.Tool;
+import src.exception.InvalidArgException;
 import src.repository.RentalRepository;
+import src.utils.Constants;
 
 public class RentalService {
     private static RentalService instance = null;
@@ -23,6 +27,30 @@ public class RentalService {
     private RentalRepository rentalRepository = RentalRepository.GetInstance();
     private ToolService toolService = ToolService.GetInstance();
 
+    // Determine if args are valid.
+    private String AreRentalAgreementArgsValid(
+        int rentalAgreementDiscountPercent,
+        int rentalAgreementRentalDays,
+        String rentalAgreementToolCode
+    ) {
+        String invalidField = "";
+        if (rentalAgreementDiscountPercent < 0 || rentalAgreementDiscountPercent > 100) {
+            invalidField = Constants.fieldDiscountPercent;
+        }
+        if (invalidField.isEmpty() && rentalAgreementRentalDays == 0) {
+            invalidField = Constants.fieldRentalDays;
+        }
+        if (invalidField.isEmpty()) {
+            try {
+                toolService.GetToolByCode(rentalAgreementToolCode);
+            } catch (InvalidArgException e) {
+                invalidField = Constants.fieldToolCode;
+            }
+        }
+        
+        return invalidField;
+    }
+    
     // Generates new rental agreement.
     private RentalAgreement CreateNewRentalAgreement(
         int rentalAgreementChargeDays,
@@ -76,7 +104,27 @@ public class RentalService {
         int rentalAgreementDiscountPercent,
         int rentalAgreementRentalDays,
         String rentalAgreementToolCode
-    ) {
+    ) throws InvalidArgException {
+        // Validate args.
+        String valid = AreRentalAgreementArgsValid(
+            rentalAgreementDiscountPercent,
+            rentalAgreementRentalDays,
+            rentalAgreementToolCode
+        );
+        if (!valid.isEmpty()) {
+            String errorMessage = "";
+            if (valid.equals(Constants.fieldDiscountPercent)) {
+                errorMessage = Constants.exceptionMessageInvalidDiscountPercent;
+            }
+            if (valid.equals(Constants.fieldRentalDays)) {
+                errorMessage = Constants.exceptionMessageInvalidRentalDays;
+            }
+            if (valid.equals(Constants.fieldToolCode)) {
+                errorMessage = String.format(Constants.exceptionMessageInvalidArg, valid, rentalAgreementToolCode);
+            }
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, valid, errorMessage);
+        }
+        
         // Calculated from checkout date and rental days.
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(rentalAgreementCheckoutDate);
@@ -146,12 +194,22 @@ public class RentalService {
         return holidays;
     }
     
-    public RentalAgreement GetRentalAgreementBySerialNumber() {
-        return null;
+    public RentalAgreement GetRentalAgreementBySerialNumber(String serialNumber) throws InvalidArgException {
+        RentalAgreement rentalAgreement = null;
+        try {
+            rentalAgreement = rentalRepository.GetRentalAgreementBySerialNumber(serialNumber);
+        } catch (NullPointerException e) {
+            String errorMessage = String.format(Constants.exceptionMessageInvalidArg, Constants.fieldSerialNumber, serialNumber);
+            throw new InvalidArgException(e.getMessage(), Constants.fieldSerialNumber, errorMessage);
+        }
+        
+        return rentalAgreement;
     }
     
-    public String GetRentalAgreementsList() {
-        return "";
+    public List<String> GetRentalAgreementsList() {
+        List<String> rentalAgreementList = rentalRepository.GetRentalAgreementSerialNumbers();
+        
+        return rentalAgreementList;
     }
 
     private int GetWeekendDaysForPeriod(Date checkoutDate, int checkoutDays) {

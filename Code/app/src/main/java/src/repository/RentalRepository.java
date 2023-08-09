@@ -31,15 +31,8 @@ public class RentalRepository {
     }
     
     // Get a rental agreement by serial number.
-    public RentalAgreement GetRentalAgreementBySerialNumber(String serialNumber) throws InvalidArgException {
-        RentalAgreement rentalAgreement = null;
-
-        try {
-            rentalAgreement = rentalAgreementLibrary.get(serialNumber);
-        } catch (NullPointerException e) {
-            String errorMessage = String.format(Constants.exceptionMessageInvalidArg, Constants.fieldSerialNumber, serialNumber);
-            throw new InvalidArgException(e.getMessage(), Constants.fieldSerialNumber, errorMessage);
-        }
+    public RentalAgreement GetRentalAgreementBySerialNumber(String serialNumber) throws NullPointerException {
+        RentalAgreement rentalAgreement = rentalAgreementLibrary.get(serialNumber);
 
         return rentalAgreement;
     }

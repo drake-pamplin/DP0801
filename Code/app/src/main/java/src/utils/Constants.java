@@ -12,13 +12,18 @@ public class Constants {
     public static final String commandTools = "tools";
 
     public static final String exceptionMessageInvalidArg = "Field %s has no definition for value \"%s\"";
+    public static final String exceptionMessageInvalidArgGeneric = "Argument invalid.";
+    public static final String exceptionMessageInvalidDiscountPercent = "Discount percent must be 0-100.";
+    public static final String exceptionMessageInvalidRentalDays = "Rental days must be greater than 0.";
 
     public static final String fieldCommandsListBase = "Enter \"%s\" for a list of tools.\n" +
         "Enter \"%s\" to rent a tool.\n" +
         "Enter \"%s\" for a list of rental serial numbers.\n" +
         "Enter \"%s\" to find a particular rental agreement.\n" +
         "Enter \"%s\" to quit the application.";
+    public static final String fieldDiscountPercent = "Discount Percent";
     public static final String fieldHelpHint = "Enter \"%s\" for a list of commands.";
+    public static final String fieldRentalDays = "Rental Days";
     public static final String fieldSerialNumber = "Serial Number";
     public static final String fieldToolCode = "Tool Code";
     
