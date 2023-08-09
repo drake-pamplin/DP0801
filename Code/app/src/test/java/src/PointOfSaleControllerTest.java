@@ -6,9 +6,9 @@ package src;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class AppTest {
+public class PointOfSaleControllerTest {
     @Test public void appHasAGreeting() {
-        App classUnderTest = new App();
+        PointOfSaleController classUnderTest = new PointOfSaleController();
         assertNotNull("app should have a greeting", classUnderTest.getGreeting());
     }
 }

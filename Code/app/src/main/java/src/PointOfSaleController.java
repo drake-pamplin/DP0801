@@ -13,7 +13,7 @@ import src.service.HelpService;
 import src.service.RentalService;
 import src.utils.Constants;
 
-public class App {
+public class PointOfSaleController {
     ToolRepository toolRepository = ToolRepository.GetInstance();
 
     HelpService helpService = HelpService.GetInstance();
@@ -26,26 +26,26 @@ public class App {
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
-        App app = new App();
+        System.out.println(new PointOfSaleController().getGreeting());
+        PointOfSaleController controller = new PointOfSaleController();
 
         Scanner scanner = new Scanner(System.in);
         try {
-            app.ClearScreen();
+            controller.ClearScreen();
 
             while (true) {
                 // Request a command.
                 System.out.println(String.format(Constants.fieldHelpHint, Constants.commandHelp) + "\nPlease input a command to be echoed: ");
                 String input = scanner.nextLine();
-                app.ClearScreen();
-                app.ParseInput(input);
+                controller.ClearScreen();
+                controller.ParseInput(input);
 
-                if (app.outputString != null && !app.outputString.isEmpty()) {
-                    System.out.println(app.outputString);
-                    app.outputString = "";
+                if (controller.outputString != null && !controller.outputString.isEmpty()) {
+                    System.out.println(controller.outputString);
+                    controller.outputString = "";
                 }
 
-                app.PrintBreak();
+                controller.PrintBreak();
             }
         } catch (IllegalStateException | NoSuchElementException | InterruptedException | IOException e) {
             System.out.println("Input failure. Exiting application. Message: " + e.getMessage());
