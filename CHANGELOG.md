@@ -24,3 +24,4 @@ v0.6.0-rental-service ==========================================================
 - Tweaked tech design and app diagram to match updated understanding of business requirements.
 
 v0.7.0-tool-service ===============================================================================
+- Added method to retrieve entire list of tool information.
