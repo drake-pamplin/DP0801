@@ -22,3 +22,5 @@ v0.6.0-rental-service ==========================================================
 - Added ToolService.java class.
 - Populated necessary methods in tool service to get rental service functional.
 - Tweaked tech design and app diagram to match updated understanding of business requirements.
+
+v0.7.0-tool-service ===============================================================================
