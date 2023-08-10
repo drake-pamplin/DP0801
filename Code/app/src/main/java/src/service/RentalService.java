@@ -1,6 +1,5 @@
 package src.service;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +20,7 @@ public class RentalService {
     }
 
     private RentalService() {
-
+        
     }
 
     private RentalRepository rentalRepository = RentalRepository.GetInstance();
@@ -100,7 +99,6 @@ public class RentalService {
 
     // Method to generate a new rental agreement.
     public String GenerateRentalAgreement(
-        Date rentalAgreementCheckoutDate,
         int rentalAgreementDiscountPercent,
         int rentalAgreementRentalDays,
         String rentalAgreementToolCode
@@ -126,6 +124,7 @@ public class RentalService {
         }
         
         // Calculated from checkout date and rental days.
+        Date rentalAgreementCheckoutDate = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(rentalAgreementCheckoutDate);
         calendar.add(Calendar.DATE, rentalAgreementRentalDays);

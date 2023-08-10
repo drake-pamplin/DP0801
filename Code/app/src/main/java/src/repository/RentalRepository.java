@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import src.VO.RentalAgreement;
-import src.exception.InvalidArgException;
-import src.utils.Constants;
 
 public class RentalRepository {
     // Only one rental repository is allowed at one time.

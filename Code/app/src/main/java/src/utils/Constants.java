@@ -26,6 +26,10 @@ public class Constants {
     public static final String fieldRentalDays = "Rental Days";
     public static final String fieldSerialNumber = "Serial Number";
     public static final String fieldToolCode = "Tool Code";
+
+    public static final String messageDiscountPercent = "Please enter the discount percent as a whole number (i.e. 15): ";
+    public static final String messageRentalDays = "Please enter the number of rental days as a whole number (i.e. 4): ";
+    public static final String messageToolCode = "Please enter the tool code as a four digit string (i.e. CHNS): ";
     
     public static final String testValue = "test";
 

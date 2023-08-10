@@ -8,16 +8,25 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import src.VO.Tool;
-import src.repository.ToolRepository;
 import src.service.HelpService;
 import src.service.RentalService;
+import src.service.ToolService;
 import src.utils.Constants;
 
 public class PointOfSaleController {
-    ToolRepository toolRepository = ToolRepository.GetInstance();
-
     HelpService helpService = HelpService.GetInstance();
     RentalService rentalService = RentalService.GetInstance();
+    ToolService toolService = ToolService.GetInstance();
+
+    /*
+     * Order:
+     *  - Tool code
+     *  - Rental days
+     *  - Discount percent
+     */
+    boolean discountPercentFlag = false;
+    boolean rentalDayFlag = false;
+    boolean toolCodeFlag = false;
     
     String outputString = "";
     
@@ -39,11 +48,17 @@ public class PointOfSaleController {
                 if (controller.outputString != null && !controller.outputString.isEmpty()) {
                     System.out.println(controller.outputString);
                     controller.outputString = "";
+                    controller.PrintBreak();
                 }
-                controller.PrintBreak();
+
+                // Set the prompt.
+                String prompt = String.format(Constants.fieldHelpHint, Constants.commandHelp) + "\nPlease input a command to be echoed: ";
+                if (controller.toolCodeFlag) {
+                    prompt = Constants.messageRentalDays;
+                }
                 
                 // Request a command.
-                System.out.println(String.format(Constants.fieldHelpHint, Constants.commandHelp) + "\nPlease input a command to be echoed: ");
+                System.out.println(prompt);
                 String input = scanner.nextLine();
                 controller.ParseInput(input);
                 controller.PrintBreak();
@@ -61,17 +76,17 @@ public class PointOfSaleController {
     // Parses user input and directs the command appropriately.
     private void ParseInput(String input) {
         switch (input.toLowerCase()) {
-            case Constants.testValue:
-                outputString += "Test output received.";
-                break;
             case Constants.commandHelp:
                 ProcessHelpCommand();    
-            break;
+                break;
             case Constants.commandQuit:  
                 System.exit(0);
                 break;
+            case Constants.commandRent:
+                ProcessRentCommand();
+                break;
             case Constants.commandTools:
-                ProcessToolsList();
+                ProcessToolsCommand();
                 break;
             default:
                 outputString += String.format("Input was: \"%s\".\n", input);
@@ -89,10 +104,15 @@ public class PointOfSaleController {
         outputString += helpService.getCommandList();
     }
     
+    // Process the rent command.
+    private void ProcessRentCommand() {
+        toolCodeFlag = true;
+    }
+    
     // Process the list tools command.
-    private void ProcessToolsList() {
+    private void ProcessToolsCommand() {
         String output = "Tool Code | Tool Type | Tool Brand";
-        for (Tool tool : toolRepository.GetTools()) {
+        for (Tool tool : toolService.GetTools()) {
             output += String.format("\n%s | %s | %s", tool.getToolCode(), tool.getToolType(), tool.getToolBrand());
         }
         
