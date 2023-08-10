@@ -14,7 +14,11 @@ public class Constants {
     public static final String exceptionMessageInvalidArg = "Field %s has no definition for value \"%s\"";
     public static final String exceptionMessageInvalidArgGeneric = "Argument invalid.";
     public static final String exceptionMessageInvalidDiscountPercent = "Discount percent must be 0-100.";
-    public static final String exceptionMessageInvalidRentalDays = "Rental days must be greater than 0.";
+    public static final String exceptionMessageInvalidRentalDaysQuantity = "Rental days must be greater than 0.";
+    public static final String exceptionMessageInvalidStringWords = "Input must have no spaces.";
+    public static final String exceptionMessageInvalidToolCodeLength = "Tool code must be four characters.";
+    public static final String exceptionMessageInvalidNumber = "Input must be a number.";
+    public static final String exceptionMessageInvalidString = "Input must be a string.";
 
     public static final String fieldCommandsListBase = "Enter \"%s\" for a list of tools.\n" +
         "Enter \"%s\" to rent a tool.\n" +
@@ -22,14 +26,18 @@ public class Constants {
         "Enter \"%s\" to find a particular rental agreement.\n" +
         "Enter \"%s\" to quit the application.";
     public static final String fieldDiscountPercent = "Discount Percent";
-    public static final String fieldHelpHint = "Enter \"%s\" for a list of commands.";
     public static final String fieldRentalDays = "Rental Days";
     public static final String fieldSerialNumber = "Serial Number";
     public static final String fieldToolCode = "Tool Code";
 
-    public static final String messageDiscountPercent = "Please enter the discount percent as a whole number (i.e. 15): ";
-    public static final String messageRentalDays = "Please enter the number of rental days as a whole number (i.e. 4): ";
-    public static final String messageToolCode = "Please enter the tool code as a four digit string (i.e. CHNS): ";
+    public static final String messageHelpHint = "Enter \"%s\" for a list of commands.";
+    public static final String messageRentalAgreementsEmpty = "No rental agreements have been made.";
+    public static final String messageRentalAgreementSuccess = "Rental agreement created successfully! Serial number: %s";
+
+    public static final String promptDiscountPercent = "Please enter the discount percent as a whole number (i.e. 15): ";
+    public static final String promptRentalDays = "Please enter the number of rental days as a whole number (i.e. 4): ";
+    public static final String promptSerialNumber = "Please enter the serial number of the rental agreement you wish to view: ";
+    public static final String promptToolCode = "Please enter the tool code as a four digit string (i.e. CHNS): ";
     
     public static final String testValue = "test";
 

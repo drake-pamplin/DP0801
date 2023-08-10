@@ -24,12 +24,11 @@ public class ToolService {
 
     public Tool GetToolByCode(String toolCode) throws InvalidArgException {
         Tool tool = null;
+        tool = toolRepository.GetToolByCode(toolCode);
 
-        try {
-            toolRepository.GetToolByCode(toolCode);
-        } catch (NullPointerException e) {
+        if (tool == null) {
             String errorMessage = String.format(Constants.exceptionMessageInvalidArg, Constants.fieldToolCode, toolCode);
-            throw new InvalidArgException(e.getMessage(), Constants.fieldToolCode, errorMessage);
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldToolCode, errorMessage);
         }
         
         return tool;

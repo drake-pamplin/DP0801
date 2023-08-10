@@ -4,10 +4,13 @@
 package src.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import src.VO.RentalAgreement;
 import src.VO.Tool;
+import src.exception.InvalidArgException;
 import src.service.HelpService;
 import src.service.RentalService;
 import src.service.ToolService;
@@ -25,9 +28,14 @@ public class PointOfSaleController {
      *  - Discount percent
      */
     boolean discountPercentFlag = false;
+    int discountPercent;
+    boolean lookupFlag = false;
     boolean rentalDayFlag = false;
+    int rentalDays;
     boolean toolCodeFlag = false;
+    String toolCode;
     
+    boolean appActive = true;
     String outputString = "";
     
     public String getGreeting() {
@@ -42,7 +50,7 @@ public class PointOfSaleController {
         try {
             controller.ClearScreen();
 
-            while (true) {
+            while (controller.appActive) {
                 controller.ClearScreen();
                 // Display any outputs.
                 if (controller.outputString != null && !controller.outputString.isEmpty()) {
@@ -52,16 +60,28 @@ public class PointOfSaleController {
                 }
 
                 // Set the prompt.
-                String prompt = String.format(Constants.fieldHelpHint, Constants.commandHelp) + "\nPlease input a command to be echoed: ";
+                String prompt = String.format(Constants.messageHelpHint, Constants.commandHelp) + "\nPlease input a command to be echoed: ";
+                if (controller.discountPercentFlag) {
+                    prompt = Constants.promptDiscountPercent;
+                }
                 if (controller.toolCodeFlag) {
-                    prompt = Constants.messageRentalDays;
+                    prompt = Constants.promptToolCode;
+                }
+                if (controller.rentalDayFlag) {
+                    prompt = Constants.promptRentalDays;
+                }
+                if (controller.lookupFlag) {
+                    prompt = Constants.promptSerialNumber;
                 }
                 
                 // Request a command.
                 System.out.println(prompt);
                 String input = scanner.nextLine();
-                controller.ParseInput(input);
-                controller.PrintBreak();
+                try {
+                    controller.ParseInput(input);
+                } catch (InvalidArgException e) {
+                    controller.outputString = e.getIssue();
+                }
             }
         } catch (IllegalStateException | NoSuchElementException | InterruptedException | IOException e) {
             System.out.println("Input failure. Exiting application. Message: " + e.getMessage());
@@ -72,18 +92,55 @@ public class PointOfSaleController {
     private void ClearScreen() throws InterruptedException, IOException {
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
     }
+
+    // Execute the call to the rental service to create a new rental agreement.
+    private void ExecuteRentalAgreement() throws InvalidArgException {
+        String serialNumber = rentalService.GenerateRentalAgreement(discountPercent, rentalDays, toolCode);
+        outputString = String.format(Constants.messageRentalAgreementSuccess, serialNumber);
+    }
     
     // Parses user input and directs the command appropriately.
-    private void ParseInput(String input) {
+    private void ParseInput(String input) throws InvalidArgException {
+        if (discountPercentFlag) {
+            discountPercent = ValidateDiscountPercent(input);
+            discountPercentFlag = false;
+            ExecuteRentalAgreement();
+            return;
+        }
+        if (toolCodeFlag) {
+            toolCode = ValidateToolCode(input);
+            toolCodeFlag = false;
+            rentalDayFlag = true;
+            return;
+        }
+        if (rentalDayFlag) {
+            rentalDays = ValidateRentalDays(input);
+            rentalDayFlag = false;
+            discountPercentFlag = true;
+            return;
+        }
+        if (lookupFlag) {
+            String serialNumber = ValidateSerialNumber(input);
+            PrintRentalAgreement(serialNumber);
+            lookupFlag = false;
+            return;
+        }
+        
         switch (input.toLowerCase()) {
             case Constants.commandHelp:
                 ProcessHelpCommand();    
                 break;
+            case Constants.commandLookup:
+                ProcessLookupCommand();
+                break;
             case Constants.commandQuit:  
-                System.exit(0);
+                appActive = false;
                 break;
             case Constants.commandRent:
                 ProcessRentCommand();
+                break;
+            case Constants.commandRentals:
+                ProcessRentalsCommand();
                 break;
             case Constants.commandTools:
                 ProcessToolsCommand();
@@ -99,14 +156,67 @@ public class PointOfSaleController {
         System.out.println("\n");
     }
 
+    // Prints the rental agreement.
+    private void PrintRentalAgreement(String serialNumber) throws InvalidArgException {
+        RentalAgreement rentalAgreement = rentalService.GetRentalAgreementBySerialNumber(serialNumber);
+
+        String output = "Rental Agreement Details:\n";
+        output += "Serial Code: " + rentalAgreement.getRentalAgreementSerialNumber() + "\n";
+        output += "Tool Code: " + rentalAgreement.getRentalAgreementToolCode() + "\n";
+        output += "Tool Brand: " + rentalAgreement.getRentalAgreementToolBrand() + "\n";
+        output += "Rental Days: " + rentalAgreement.getRentalAgreementRentalDays() + "\n";
+        // TODO: Format date.
+        output += "Check Out Date: " + rentalAgreement.getRentalAgreementCheckoutDate().toString() + "\n";
+        // TODO: Format date.
+        output += "Due Date: " + rentalAgreement.getRentalAgreementDueDate().toString() + "\n";
+        output += "Daily Rental Charge: $" + rentalAgreement.getRentalAgreementDailyRentalCharge() + "\n";
+        output += "Charge Days: " + rentalAgreement.getRentalAgreementChargeDays() + "\n";
+        // TODO: Round dollar value half up to cents.
+        output += "Pre-discount Charge: $" + rentalAgreement.getRentalAgreementPreDiscountCharge() + "\n";
+        // TODO: Address issue with discount percent not recording properly.
+        output += "Discount Percent: " + rentalAgreement.getRentalAgreementDiscountPercent() + "\n";
+        // TODO: Round dollar value half up to cents.
+        output += "Discount Amount: $" + rentalAgreement.getRentalAgreementDiscountAmount() + "\n";
+        output += "Final Charge: $" + rentalAgreement.getRentalAgreementFinalCharge();
+
+        outputString = output;
+    }
+
     // Process the help command.
     private void ProcessHelpCommand() {
         outputString += helpService.getCommandList();
+    }
+
+    // Process the lookup command.
+    private void ProcessLookupCommand() {
+        if (rentalService.GetRentalAgreementsSerialNumberList().size() == 0) {
+            outputString = Constants.messageRentalAgreementsEmpty;
+            return;
+        }
+        
+        ProcessRentalsCommand();
+        lookupFlag = true;
     }
     
     // Process the rent command.
     private void ProcessRentCommand() {
         toolCodeFlag = true;
+    }
+
+    // Process the rentals command.
+    private void ProcessRentalsCommand() {
+        List<String> serialNumbers = rentalService.GetRentalAgreementsSerialNumberList();
+
+        if (serialNumbers.size() == 0) {
+            outputString = Constants.messageRentalAgreementsEmpty;
+            return;
+        }
+        
+        String output = "Rental Serial Numbers:";
+        for (String serialNumber : rentalService.GetRentalAgreementsSerialNumberList()) {
+            output += "\n" + serialNumber;
+        }
+        outputString = output;
     }
     
     // Process the list tools command.
@@ -117,5 +227,109 @@ public class PointOfSaleController {
         }
         
         outputString += output;
+    }
+
+    // Validate the discount percent provided.
+    private int ValidateDiscountPercent(String discountPercentString) throws InvalidArgException {
+        int discountPercentInt = -1;
+
+        // Input must be one word.
+        String[] inputWords = discountPercentString.split(" ");
+        if (inputWords.length != 1) {
+            String errorMessage = Constants.exceptionMessageInvalidStringWords;
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldDiscountPercent, errorMessage);
+        }
+
+        // Input must be an int.
+        try {
+            discountPercentInt = Integer.parseInt(discountPercentString);
+        } catch (NumberFormatException e) {
+            String errorMessage = Constants.exceptionMessageInvalidNumber;
+            throw new InvalidArgException(e.getMessage(), Constants.fieldDiscountPercent, errorMessage);
+        }
+
+        // Input must be between 0 and 100.
+        if (discountPercentInt < 0 || discountPercentInt > 100) {
+            String errorMessage = Constants.exceptionMessageInvalidDiscountPercent;
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldDiscountPercent, errorMessage);
+        }
+
+        return discountPercent;
+    }
+
+    // Validate the serial number provided.
+    private String ValidateSerialNumber(String serialNumberString) throws InvalidArgException {
+        String serialNumber = "";
+
+        // Input must be one word.
+        String[] inputWords = serialNumberString.split(" ");
+        if (inputWords.length != 1) {
+            String errorMessage = Constants.exceptionMessageInvalidStringWords;
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldSerialNumber, errorMessage);
+        }
+
+        // Input must be present in rental agreement database.
+        try {
+            serialNumber = rentalService.GetRentalAgreementBySerialNumber(serialNumberString).getRentalAgreementSerialNumber();
+        } catch (InvalidArgException e) {
+            String errorMessage = String.format(Constants.exceptionMessageInvalidArg, Constants.fieldSerialNumber, serialNumberString);
+            throw new InvalidArgException(e.getMessage(), Constants.fieldSerialNumber, errorMessage);
+        }
+
+        return serialNumber;
+    }
+
+    // Validate the tool code provided.
+    private String ValidateToolCode(String toolCode) throws InvalidArgException {
+        // Input must be one word.
+        String[] inputWords = toolCode.split(" ");
+        if (inputWords.length != 1) {
+            String errorMessage = Constants.exceptionMessageInvalidStringWords;
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldToolCode, errorMessage);
+        }
+
+        // Input must be four characters long.
+        if (toolCode.length() != 4) {
+            String errorMessage = Constants.exceptionMessageInvalidToolCodeLength;
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldToolCode, errorMessage);
+        }
+
+        // Input must be a valid tool. Invalid tool will throw InvalidArgException.java.
+        try {
+            toolService.GetToolByCode(toolCode);
+        } catch (InvalidArgException e) {
+            String errorMessage = String.format(Constants.exceptionMessageInvalidArg, Constants.fieldToolCode, toolCode);
+            throw new InvalidArgException(e.getMessage(), Constants.fieldToolCode, errorMessage);
+        }
+
+        return toolCode;
+    }
+
+    // Validate the number of rental days provided.
+    private int ValidateRentalDays(String rentalDaysString) throws InvalidArgException {
+        int rentalDaysInt = -1;
+
+        // Input must be one word.
+        String[] inputWords = rentalDaysString.split(" ");
+        if (inputWords.length != 1) {
+            String errorMessage = Constants.exceptionMessageInvalidStringWords;
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldRentalDays, errorMessage);
+        }
+
+        // Input must be an int.
+        try {
+            rentalDaysInt = Integer.parseInt(rentalDaysString);
+        } catch (NumberFormatException e) {
+            String errorMessage = Constants.exceptionMessageInvalidNumber;
+            throw new InvalidArgException(e.getMessage(), Constants.fieldRentalDays, errorMessage);
+        }
+
+        // Rental days must be 1 or more.
+        if (rentalDaysInt < 1) {
+            String errorMessage = Constants.exceptionMessageInvalidRentalDaysQuantity;
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldRentalDays, errorMessage);
+        }
+
+        return rentalDaysInt;
     }
 }

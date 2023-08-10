@@ -36,7 +36,7 @@ public class RentalService {
         if (rentalAgreementDiscountPercent < 0 || rentalAgreementDiscountPercent > 100) {
             invalidField = Constants.fieldDiscountPercent;
         }
-        if (invalidField.isEmpty() && rentalAgreementRentalDays == 0) {
+        if (invalidField.isEmpty() && rentalAgreementRentalDays < 1) {
             invalidField = Constants.fieldRentalDays;
         }
         if (invalidField.isEmpty()) {
@@ -69,7 +69,7 @@ public class RentalService {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(rentalAgreementCheckoutDate);
         int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
@@ -115,7 +115,7 @@ public class RentalService {
                 errorMessage = Constants.exceptionMessageInvalidDiscountPercent;
             }
             if (valid.equals(Constants.fieldRentalDays)) {
-                errorMessage = Constants.exceptionMessageInvalidRentalDays;
+                errorMessage = Constants.exceptionMessageInvalidRentalDaysQuantity;
             }
             if (valid.equals(Constants.fieldToolCode)) {
                 errorMessage = String.format(Constants.exceptionMessageInvalidArg, valid, rentalAgreementToolCode);
@@ -195,17 +195,16 @@ public class RentalService {
     
     public RentalAgreement GetRentalAgreementBySerialNumber(String serialNumber) throws InvalidArgException {
         RentalAgreement rentalAgreement = null;
-        try {
-            rentalAgreement = rentalRepository.GetRentalAgreementBySerialNumber(serialNumber);
-        } catch (NullPointerException e) {
+        rentalAgreement = rentalRepository.GetRentalAgreementBySerialNumber(serialNumber);
+        if (rentalAgreement == null) {
             String errorMessage = String.format(Constants.exceptionMessageInvalidArg, Constants.fieldSerialNumber, serialNumber);
-            throw new InvalidArgException(e.getMessage(), Constants.fieldSerialNumber, errorMessage);
+            throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldSerialNumber, errorMessage);
         }
         
         return rentalAgreement;
     }
     
-    public List<String> GetRentalAgreementsList() {
+    public List<String> GetRentalAgreementsSerialNumberList() {
         List<String> rentalAgreementList = rentalRepository.GetRentalAgreementSerialNumbers();
         
         return rentalAgreementList;
