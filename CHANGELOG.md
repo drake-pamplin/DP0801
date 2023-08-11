@@ -30,3 +30,5 @@ v0.8.0-controller ==============================================================
 - Restructured and renamed controller to reflect app design intentions.
 - Added command parsing for all app commands.
 - Added exceptions for bad commands and bad input.
+
+v0.9.0-testing ====================================================================================
