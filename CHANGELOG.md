@@ -27,3 +27,6 @@ v0.7.0-tool-service ============================================================
 - Added method to retrieve entire list of tool information.
 
 v0.8.0-controller =================================================================================
+- Restructured and renamed controller to reflect app design intentions.
+- Added command parsing for all app commands.
+- Added exceptions for bad commands and bad input.
