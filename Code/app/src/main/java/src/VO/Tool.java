@@ -20,7 +20,7 @@ public class Tool {
 
     @Getter
     @Setter
-    private Float toolDailyCharge;
+    private float toolDailyCharge;
 
     @Getter
     @Setter

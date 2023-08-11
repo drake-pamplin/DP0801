@@ -1,5 +1,8 @@
 package src.service;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -148,9 +151,11 @@ public class RentalService {
 
         // Calculated from number of charge days * the daily charge.
         float rentalAgreementPreDiscountCharge = rentalAgreementChargeDays * tool.getToolDailyCharge();
+        rentalAgreementPreDiscountCharge = RoundFloat(rentalAgreementPreDiscountCharge);
 
         // Calucated from pre-discount charge * discount percent.
         float rentalAgreementDiscountAmount = rentalAgreementPreDiscountCharge * ((float)rentalAgreementDiscountPercent / 100f);
+        rentalAgreementDiscountAmount = RoundFloat(rentalAgreementDiscountAmount);
 
         // Calculated from pre-discount charge - discount charge.
         float rentalAgreementFinalCharge = rentalAgreementPreDiscountCharge - rentalAgreementDiscountAmount;
@@ -264,5 +269,11 @@ public class RentalService {
         } 
         
         return false;
+    }
+
+    private float RoundFloat(float value) {
+        BigDecimal valueToRound = new BigDecimal(value);
+        BigDecimal rounded = valueToRound.round(new MathContext(3, RoundingMode.HALF_UP));
+        return rounded.floatValue();
     }
 }

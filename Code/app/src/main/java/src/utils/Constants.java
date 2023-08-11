@@ -30,6 +30,8 @@ public class Constants {
     public static final String fieldSerialNumber = "Serial Number";
     public static final String fieldToolCode = "Tool Code";
 
+    public static final String formatDate = "yyyy-MM-dd";
+
     public static final String messageHelpHint = "Enter \"%s\" for a list of commands.";
     public static final String messageRentalAgreementsEmpty = "No rental agreements have been made.";
     public static final String messageRentalAgreementSuccess = "Rental agreement created successfully! Serial number: %s";

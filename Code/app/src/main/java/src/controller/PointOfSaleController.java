@@ -4,6 +4,9 @@
 package src.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -98,6 +101,16 @@ public class PointOfSaleController {
         String serialNumber = rentalService.GenerateRentalAgreement(discountPercent, rentalDays, toolCode);
         outputString = String.format(Constants.messageRentalAgreementSuccess, serialNumber);
     }
+
+    // Get input date as a cleanly formatted string.
+    private String GetDateAsFormattedString(Date date) {
+        String dateString = "";
+
+        SimpleDateFormat formatter = new SimpleDateFormat(Constants.formatDate);
+        dateString = formatter.format(date);
+
+        return dateString;
+    }
     
     // Parses user input and directs the command appropriately.
     private void ParseInput(String input) throws InvalidArgException {
@@ -165,17 +178,14 @@ public class PointOfSaleController {
         output += "Tool Code: " + rentalAgreement.getRentalAgreementToolCode() + "\n";
         output += "Tool Brand: " + rentalAgreement.getRentalAgreementToolBrand() + "\n";
         output += "Rental Days: " + rentalAgreement.getRentalAgreementRentalDays() + "\n";
-        // TODO: Format date.
-        output += "Check Out Date: " + rentalAgreement.getRentalAgreementCheckoutDate().toString() + "\n";
-        // TODO: Format date.
-        output += "Due Date: " + rentalAgreement.getRentalAgreementDueDate().toString() + "\n";
+        String checkoutDateString = GetDateAsFormattedString(rentalAgreement.getRentalAgreementCheckoutDate());
+        output += "Check Out Date: " + checkoutDateString + "\n";
+        String dueDateString = GetDateAsFormattedString(rentalAgreement.getRentalAgreementDueDate());
+        output += "Due Date: " + dueDateString + "\n";
         output += "Daily Rental Charge: $" + rentalAgreement.getRentalAgreementDailyRentalCharge() + "\n";
         output += "Charge Days: " + rentalAgreement.getRentalAgreementChargeDays() + "\n";
-        // TODO: Round dollar value half up to cents.
         output += "Pre-discount Charge: $" + rentalAgreement.getRentalAgreementPreDiscountCharge() + "\n";
-        // TODO: Address issue with discount percent not recording properly.
         output += "Discount Percent: " + rentalAgreement.getRentalAgreementDiscountPercent() + "\n";
-        // TODO: Round dollar value half up to cents.
         output += "Discount Amount: $" + rentalAgreement.getRentalAgreementDiscountAmount() + "\n";
         output += "Final Charge: $" + rentalAgreement.getRentalAgreementFinalCharge();
 
