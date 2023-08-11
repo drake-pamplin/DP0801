@@ -10,8 +10,8 @@ import src.controller.PointOfSaleController;
 import static org.junit.Assert.*;
 
 public class PointOfSaleControllerTest {
-    @Test public void appHasAGreeting() {
-        PointOfSaleController classUnderTest = new PointOfSaleController();
-        assertNotNull("app should have a greeting", classUnderTest.getGreeting());
-    }
+    // @Test public void appHasAGreeting() {
+    //     PointOfSaleController classUnderTest = new PointOfSaleController();
+    //     assertNotNull("app should have a greeting", classUnderTest.getGreeting());
+    // }
 }

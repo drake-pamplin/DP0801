@@ -1,7 +1,6 @@
 package src.service;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
@@ -102,6 +101,7 @@ public class RentalService {
 
     // Method to generate a new rental agreement.
     public String GenerateRentalAgreement(
+        Date testCheckoutDate,
         int rentalAgreementDiscountPercent,
         int rentalAgreementRentalDays,
         String rentalAgreementToolCode
@@ -128,6 +128,9 @@ public class RentalService {
         
         // Calculated from checkout date and rental days.
         Date rentalAgreementCheckoutDate = new Date();
+        if (testCheckoutDate != null) {
+            rentalAgreementCheckoutDate = testCheckoutDate;
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(rentalAgreementCheckoutDate);
         calendar.add(Calendar.DATE, rentalAgreementRentalDays);
@@ -273,7 +276,8 @@ public class RentalService {
 
     private float RoundFloat(float value) {
         BigDecimal valueToRound = new BigDecimal(value);
-        BigDecimal rounded = valueToRound.round(new MathContext(3, RoundingMode.HALF_UP));
+        BigDecimal rounded = valueToRound.setScale(2, RoundingMode.HALF_UP);
+        // BigDecimal rounded = valueToRound.round(new MathContext(3, RoundingMode.HALF_UP));
         return rounded.floatValue();
     }
 }

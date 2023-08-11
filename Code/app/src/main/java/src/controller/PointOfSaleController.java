@@ -5,8 +5,8 @@ package src.controller;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -14,6 +14,7 @@ import java.util.Scanner;
 import src.VO.RentalAgreement;
 import src.VO.Tool;
 import src.exception.InvalidArgException;
+import src.exception.InvalidCommandException;
 import src.service.HelpService;
 import src.service.RentalService;
 import src.service.ToolService;
@@ -24,12 +25,6 @@ public class PointOfSaleController {
     RentalService rentalService = RentalService.GetInstance();
     ToolService toolService = ToolService.GetInstance();
 
-    /*
-     * Order:
-     *  - Tool code
-     *  - Rental days
-     *  - Discount percent
-     */
     boolean discountPercentFlag = false;
     int discountPercent;
     boolean lookupFlag = false;
@@ -40,13 +35,8 @@ public class PointOfSaleController {
     
     boolean appActive = true;
     String outputString = "";
-    
-    public String getGreeting() {
-        return "Hello World!";
-    }
 
     public static void main(String[] args) {
-        System.out.println(new PointOfSaleController().getGreeting());
         PointOfSaleController controller = new PointOfSaleController();
 
         Scanner scanner = new Scanner(System.in);
@@ -63,7 +53,7 @@ public class PointOfSaleController {
                 }
 
                 // Set the prompt.
-                String prompt = String.format(Constants.messageHelpHint, Constants.commandHelp) + "\nPlease input a command to be echoed: ";
+                String prompt = String.format(Constants.messageHelpHint, Constants.commandHelp) + Constants.promptDefault;
                 if (controller.discountPercentFlag) {
                     prompt = Constants.promptDiscountPercent;
                 }
@@ -74,6 +64,10 @@ public class PointOfSaleController {
                     prompt = Constants.promptRentalDays;
                 }
                 if (controller.lookupFlag) {
+                    controller.ProcessRentalsCommand();
+                    System.out.println(controller.outputString);
+                    controller.outputString = "";
+                    controller.PrintBreak();
                     prompt = Constants.promptSerialNumber;
                 }
                 
@@ -84,10 +78,12 @@ public class PointOfSaleController {
                     controller.ParseInput(input);
                 } catch (InvalidArgException e) {
                     controller.outputString = e.getIssue();
+                } catch (InvalidCommandException e) {
+                    controller.outputString = String.format(Constants.exceptionMessageInvalidCommand, input);
                 }
             }
         } catch (IllegalStateException | NoSuchElementException | InterruptedException | IOException e) {
-            System.out.println("Input failure. Exiting application. Message: " + e.getMessage());
+            System.out.println(String.format(Constants.exceptionMessageApplicationFailure, e.getMessage()));
         }
     }
 
@@ -98,7 +94,7 @@ public class PointOfSaleController {
 
     // Execute the call to the rental service to create a new rental agreement.
     private void ExecuteRentalAgreement() throws InvalidArgException {
-        String serialNumber = rentalService.GenerateRentalAgreement(discountPercent, rentalDays, toolCode);
+        String serialNumber = rentalService.GenerateRentalAgreement(new GregorianCalendar(2021, 6, 1).getTime(), discountPercent, rentalDays, toolCode);
         outputString = String.format(Constants.messageRentalAgreementSuccess, serialNumber);
     }
 
@@ -113,7 +109,7 @@ public class PointOfSaleController {
     }
     
     // Parses user input and directs the command appropriately.
-    private void ParseInput(String input) throws InvalidArgException {
+    private void ParseInput(String input) throws InvalidArgException, InvalidCommandException {
         if (discountPercentFlag) {
             discountPercent = ValidateDiscountPercent(input);
             discountPercentFlag = false;
@@ -159,8 +155,7 @@ public class PointOfSaleController {
                 ProcessToolsCommand();
                 break;
             default:
-                outputString += String.format("Input was: \"%s\".\n", input);
-                break;
+                throw new InvalidCommandException(Constants.exceptionMessageInvalidArgGeneric, input);
         }
     }
 
@@ -204,7 +199,6 @@ public class PointOfSaleController {
             return;
         }
         
-        ProcessRentalsCommand();
         lookupFlag = true;
     }
     
@@ -222,7 +216,7 @@ public class PointOfSaleController {
             return;
         }
         
-        String output = "Rental Serial Numbers:";
+        String output = Constants.headerRentals;
         for (String serialNumber : rentalService.GetRentalAgreementsSerialNumberList()) {
             output += "\n" + serialNumber;
         }
@@ -231,7 +225,7 @@ public class PointOfSaleController {
     
     // Process the list tools command.
     private void ProcessToolsCommand() {
-        String output = "Tool Code | Tool Type | Tool Brand";
+        String output = Constants.headerTools;
         for (Tool tool : toolService.GetTools()) {
             output += String.format("\n%s | %s | %s", tool.getToolCode(), tool.getToolType(), tool.getToolBrand());
         }
@@ -264,7 +258,7 @@ public class PointOfSaleController {
             throw new InvalidArgException(Constants.exceptionMessageInvalidArgGeneric, Constants.fieldDiscountPercent, errorMessage);
         }
 
-        return discountPercent;
+        return discountPercentInt;
     }
 
     // Validate the serial number provided.
