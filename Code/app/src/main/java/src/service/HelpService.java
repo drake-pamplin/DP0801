@@ -4,15 +4,7 @@ import lombok.Getter;
 import src.utils.Constants;
 
 public class HelpService {
-    private static HelpService instance = null;
-    public static HelpService GetInstance() {
-        if (instance == null) {
-            instance = new HelpService();
-        }
-        return instance;
-    }
-
-    private HelpService() {
+    public HelpService() {
         commandList = String.format(
             Constants.fieldCommandsListBase,
             Constants.commandTools,

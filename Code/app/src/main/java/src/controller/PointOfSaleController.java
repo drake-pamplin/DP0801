@@ -6,7 +6,6 @@ package src.controller;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -15,15 +14,23 @@ import src.VO.RentalAgreement;
 import src.VO.Tool;
 import src.exception.InvalidArgException;
 import src.exception.InvalidCommandException;
+import src.repository.RentalRepository;
+import src.repository.ToolRepository;
 import src.service.HelpService;
 import src.service.RentalService;
 import src.service.ToolService;
 import src.utils.Constants;
 
 public class PointOfSaleController {
-    HelpService helpService = HelpService.GetInstance();
-    RentalService rentalService = RentalService.GetInstance();
-    ToolService toolService = ToolService.GetInstance();
+    public PointOfSaleController(HelpService helpService, RentalService rentalService, ToolService toolService) {
+        this.helpService = helpService;
+        this.rentalService = rentalService;
+        this.toolService = toolService;
+    }
+    
+    HelpService helpService;
+    RentalService rentalService;
+    ToolService toolService;
 
     boolean discountPercentFlag = false;
     int discountPercent;
@@ -37,7 +44,10 @@ public class PointOfSaleController {
     String outputString = "";
 
     public static void main(String[] args) {
-        PointOfSaleController controller = new PointOfSaleController();
+        HelpService helpService = new HelpService();
+        RentalService rentalService = new RentalService(new RentalRepository(), new ToolService(new ToolRepository()));
+        ToolService toolService = new ToolService(new ToolRepository());
+        PointOfSaleController controller = new PointOfSaleController(helpService, rentalService, toolService);
 
         Scanner scanner = new Scanner(System.in);
         try {
@@ -94,8 +104,8 @@ public class PointOfSaleController {
 
     // Execute the call to the rental service to create a new rental agreement.
     private void ExecuteRentalAgreement() throws InvalidArgException {
-        String serialNumber = rentalService.GenerateRentalAgreement(new GregorianCalendar(2021, 6, 1).getTime(), discountPercent, rentalDays, toolCode);
-        outputString = String.format(Constants.messageRentalAgreementSuccess, serialNumber);
+        RentalAgreement rentalAgreement = rentalService.GenerateRentalAgreement(null, discountPercent, rentalDays, toolCode);
+        outputString = String.format(Constants.messageRentalAgreementSuccess, rentalAgreement.getRentalAgreementSerialNumber());
     }
 
     // Get input date as a cleanly formatted string.
@@ -169,7 +179,7 @@ public class PointOfSaleController {
         RentalAgreement rentalAgreement = rentalService.GetRentalAgreementBySerialNumber(serialNumber);
 
         String output = "Rental Agreement Details:\n";
-        output += "Serial Code: " + rentalAgreement.getRentalAgreementSerialNumber() + "\n";
+        output += "Serial Number: " + rentalAgreement.getRentalAgreementSerialNumber() + "\n";
         output += "Tool Code: " + rentalAgreement.getRentalAgreementToolCode() + "\n";
         output += "Tool Brand: " + rentalAgreement.getRentalAgreementToolBrand() + "\n";
         output += "Rental Days: " + rentalAgreement.getRentalAgreementRentalDays() + "\n";

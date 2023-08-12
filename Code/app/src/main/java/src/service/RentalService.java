@@ -13,20 +13,13 @@ import src.repository.RentalRepository;
 import src.utils.Constants;
 
 public class RentalService {
-    private static RentalService instance = null;
-    public static RentalService GetInstance() {
-        if (instance == null) {
-            instance = new RentalService();
-        }
-        return instance;
+    public RentalService(RentalRepository rentalRepository, ToolService toolService) {
+        this.rentalRepository = rentalRepository;
+        this.toolService = toolService;
     }
 
-    private RentalService() {
-        
-    }
-
-    private RentalRepository rentalRepository = RentalRepository.GetInstance();
-    private ToolService toolService = ToolService.GetInstance();
+    private RentalRepository rentalRepository;
+    private ToolService toolService;
 
     // Determine if args are valid.
     private String AreRentalAgreementArgsValid(
@@ -100,7 +93,7 @@ public class RentalService {
     }
 
     // Method to generate a new rental agreement.
-    public String GenerateRentalAgreement(
+    public RentalAgreement GenerateRentalAgreement(
         Date testCheckoutDate,
         int rentalAgreementDiscountPercent,
         int rentalAgreementRentalDays,
@@ -180,14 +173,14 @@ public class RentalService {
         );
         rentalRepository.AddRentalAgreement(rentalAgreement);
         
-        return rentalAgreement.getRentalAgreementSerialNumber();
+        return rentalAgreement;
     }
 
     private int GetHolidaysForPeriod(Date checkoutDate, int checkoutDays) {
         int holidays = 0;
 
         Calendar calendar = Calendar.getInstance();
-        for (int dayIndex = 0; dayIndex < checkoutDays; dayIndex++) {
+        for (int dayIndex = 0; dayIndex <= checkoutDays; dayIndex++) {
             calendar.setTime(checkoutDate);
             calendar.add(Calendar.DATE, dayIndex);
             if (IsDayEligibleIndependenceDay(calendar, checkoutDays, dayIndex)) {
@@ -222,7 +215,7 @@ public class RentalService {
         int weekendDays = 0;
 
         Calendar calendar = Calendar.getInstance();
-        for (int dayIndex = 0; dayIndex < checkoutDays; dayIndex++) {
+        for (int dayIndex = 0; dayIndex <= checkoutDays; dayIndex++) {
             calendar.setTime(checkoutDate);
             calendar.add(Calendar.DATE, dayIndex);
             if (IsDayWeekend(calendar)) {

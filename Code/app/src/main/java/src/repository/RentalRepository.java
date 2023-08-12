@@ -8,16 +8,7 @@ import java.util.Map;
 import src.VO.RentalAgreement;
 
 public class RentalRepository {
-    // Only one rental repository is allowed at one time.
-    private static RentalRepository instance = null;
-    public static RentalRepository GetInstance() {
-        if (instance == null) {
-            instance = new RentalRepository();
-        }
-        return instance;
-    }
-
-    private RentalRepository() {
+    public RentalRepository() {
         rentalAgreementLibrary = new HashMap<>();
     }
 

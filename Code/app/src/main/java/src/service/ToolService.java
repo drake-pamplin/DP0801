@@ -8,16 +8,8 @@ import src.repository.ToolRepository;
 import src.utils.Constants;
 
 public class ToolService {
-    private static ToolService instance = null;
-    public static ToolService GetInstance() {
-        if (instance == null) {
-            instance = new ToolService();
-        }
-        return instance;
-    }
-
-    private ToolService() {
-        toolRepository = ToolRepository.GetInstance();
+    public ToolService(ToolRepository toolRepository) {
+        this.toolRepository = toolRepository;
     }
 
     private ToolRepository toolRepository;
