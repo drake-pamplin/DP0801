@@ -32,3 +32,6 @@ v0.8.0-controller ==============================================================
 - Added exceptions for bad commands and bad input.
 
 v0.9.0-testing ====================================================================================
+- Added test batteries for each functional class.
+- Confirmed passing tests.
+- Covered a wide swath of happy and sad path testing.
