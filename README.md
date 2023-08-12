@@ -1,5 +1,5 @@
 # DP0801
-Repo for Cardinal Financial demo project.
+Repo for demo project.
 
 Instructions to build and run:
 1. Navigate to CardinalFinancial/Code/.
