@@ -37,3 +37,4 @@ v0.9.0-testing =================================================================
 - Covered a wide swath of happy and sad path testing.
 
 v0.10.0-presentation ==============================================================================
+- Added application presentation and instructions in the README.cd.
